@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GCompLabTrack</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+
+    <div class="app-layout">
+
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard">
+        <img src="gcomlabtrack-logo.png" alt="" width="34" height="34" class="brand-logo">
+        <span>GComLab Track</span>
+      </a>
+
+     <div class="menu-label">Menu</div>
+  <nav class="nav" id="nav">
+    <button data-view="dashboard" class="active">
+      <img class="icon" src="home.png" alt="">
+      Dashboard
+      
+    </button>
+    <button data-view="inventory">
+      <img class="icon" src="inventory.png" alt="">
+      Inventory
+
+    </button>
+    <button data-view="reports">
+      <img class="icon" src="repair.png" alt="">
+      Repair Reports
+      <span class="count zero" id="openCount">0</span>
+    </button>
+  </nav>
+
+      <div class="sidebar-footer">
+        Gordon College<br>
+        Computer Laboratory
+      </div>
+    </aside>
+  
+    <main class="main">
+  <header class="topbar">
+    <div class="titles">
+      <span class="crumb" id="crumb">Dashboard</span>
+      <h1 id="pageTitle">Computer Lab Overview</h1>
+    </div>
+    <span class="spacer"></span>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
+      <img class="icon" id="themeIcon" src="sun.png" alt="">
+    </button>
+    <div class="pill select">
+      <img class="icon" src="chevron.png" alt="">
+      <select id="labSelect" aria-label="Select computer lab"></select>
+    </div>
+    <button class="pill new" id="newReportBtn" type="button">+ New Report</button>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section class="view active" id="view-dashboard">
+    <div class="hero" id="hero" role="region" aria-label="Computer laboratory photos">
+      <img class="hero-fallback" src="hero.png" alt="">
+      <div class="slides" id="heroSlides"></div>
+      <button class="hero-arrow prev" id="heroPrev" type="button" aria-label="Previous photo" hidden>&#8249;</button>
+      <button class="hero-arrow next" id="heroNext" type="button" aria-label="Next photo" hidden>&#8250;</button>
+      <div class="hero-dots" id="heroDots"></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-head">
+          <h2>Recent repair reports</h2>
+          <button class="link" data-goto="reports" type="button">View all</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Equipment</th><th>Problem</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody id="recentBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Latest&nbsp; Inventory</h2>
+          <span class="meta" id="invDate"></span>
+        </div>
+        <div class="inv" id="invList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVENTORY -->
+  <section class="view" id="view-inventory">
+    <div class="card full">
+      <div class="card-head">
+        <h2>Inventory - <span id="invLabName"></span></h2>
+        <span class="meta" id="invDate2"></span>
+      </div>
+      <div class="inv" id="invListFull"></div>
+      <form class="add-row" id="addEquipForm">
+        <input type="text" id="newEquipName" placeholder="Add new equipment" maxlength="30" required>
+        <input type="number" id="newEquipCount" min="0" value="0" aria-label="Quantity">
+        <button class="btn primary" type="submit">+ Add equipment</button>
+      </form>
+      <div class="inv-foot">
+        <button class="btn danger" id="deleteLabBtn" type="button">Delete this lab</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPAIR REPORTS -->
+   <section class="view" id="view-reports">
+    <div class="card full">
+      <div class="card-head">
+        <h2>All repair reports</h2>
+        <span class="meta" id="repCount"></span>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="toolbar">
+        <input type="search" id="search" placeholder="Search equipment, problem or sticker">
+        <select id="statusFilter" aria-label="Filter by status">
+          <option value="all">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Fixed">Fixed</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Equipment</th><th>Problem</th>
+              <th class="sortable" id="dateSort" title="Click to sort by date">Date</th>
+              <th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="allBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Report modal -->
+<div class="overlay" id="reportOverlay">
+  <form class="modal" id="reportForm">
+    <h3 id="reportModalTitle">New Repair Report</h3>
+    <div class="row2">
+      <div class="field">
+        <label for="fEquip">Equipment</label>
+        <input id="fEquip" list="equipList" placeholder="e.g. CPU" maxlength="30" required>
+        <datalist id="equipList"></datalist>
+      </div>
+      <div class="field">
+        <label for="fSticker">Sticker #</label>
+        <input id="fSticker" type="text" placeholder="e.g. Sticker #7" maxlength="30" required>
+      </div>
+    </div>
+    <div class="field">
+      <label for="fProblem">Problem</label>
+      <textarea id="fProblem" rows="2" placeholder="Describe the problem" maxlength="120" required></textarea>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="fDate">Date</label>
+        <input id="fDate" type="date" required>
+      </div>
+      <div class="field">
+        <label for="fStatus">Status</label>
+        <select id="fStatus">
+          <option>Pending</option><option>In Progress</option><option>Fixed</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button type="button" class="btn" danger left id="deletereportbtn" hidden>Delete</button>
+      <button type="button" class="btn" id="cancelReportBtn">Cancel</button>
+      <button type="submit" class="btn primary" id="reportSubmit">Submit</button>
+    </div>
+  </form>
+</div>
+
+<!--Lab Modal-->
+<div class="overlay" id="labOverlay">
+  <form class="modal" id="labForm">
+    <h3>Add a computer lab</h3>
+    <div class="field">
+      <label for="fLabName">Lab Name</label>
+      <input id="fLabName" type="text" placeholder="e.g. Computer Lab 1" maxlength="30" required>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn" id="labSubmit">Submit</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast"> 
+</div>
+  
+<script src="function.js"></script>
+
+  </body>
+</html>
+
+<!--JAVA NAaaa-->
